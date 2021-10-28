@@ -11,5 +11,3 @@ def loadData(dataset):
     wnuttrain = datasets[dataset]
     train = pd.read_table(wnuttrain, header=None, names=['token', 'label', 'bio_only', 'upos']).dropna()
     return train
-
-print(loadData("train"))

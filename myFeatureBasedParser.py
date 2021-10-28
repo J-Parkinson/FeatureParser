@@ -1,12 +1,13 @@
-# reload training file
-wnuttrain = 'https://storage.googleapis.com/wnut-2017_ner-shared-task/wnut17train_clean_tagged.txt'
-train = pd.read_table(wnuttrain, header=None, names=['token', 'label', 'bio_only', 'upos']).dropna()  # drop empty rows
+from loadData import *
 
-# in order to convert POS tags to integers: get the UPOS tagset
-pos_vocab = train.upos.unique().tolist()
+def get_pos_vocab():
+  train = loadData("train")
+  pos_vocab = train.upos.unique().tolist()
+  return pos_vocab
 
 # feature 1: convert POS-tags to integers
-def pos_index(pos):
+#This way we can train on it numerically
+def pos_index(pos, pos_vocab):
   ind = pos_vocab.index(pos)
   return ind
 
@@ -43,9 +44,10 @@ def bio_index(bio):
 
 # pass a data frame through our feature extractor
 def extract_features(txt):
+  pos_vocab = get_pos_vocab()
   txt.dropna(inplace=True)  # drop empty rows between texts
   txt_copy = txt.reset_index(drop=True)
-  posinds = [pos_index(u) for u in txt_copy['upos']]
+  posinds = [pos_index(u, pos_vocab) for u in txt_copy['upos']]
   txt_copy['pos_indices'] = posinds
   isprop = [is_propn(u) for u in txt_copy['upos']]
   txt_copy['is_propn'] = isprop
