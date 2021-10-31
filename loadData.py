@@ -9,5 +9,5 @@ datasets = {
 
 def loadData(dataset):
     wnuttrain = datasets[dataset]
-    train = pd.read_table(wnuttrain, header=None, names=['token', 'label', 'bio_only', 'upos']).dropna()
+    train = pd.read_table(wnuttrain, header=None, names=['token', 'label', 'bio_only', 'upos'])
     return train
