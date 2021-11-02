@@ -5,8 +5,10 @@ from trainClassifier import *
 
 def runClassifier():
     train = loadData("train")
-    train_features = extract_features(train)
+    dev = loadData("dev")
+    train_features = extract_features(train, preparetxt=True)
     trained_classifier = trainModel(train_features)
-    train_evaluate = wnut_evaluate(trained_classifier)
+    testModel(extract_features(dev), trained_classifier)
+    #train_evaluate = wnut_evaluate(trained_classifier)
 
 runClassifier()

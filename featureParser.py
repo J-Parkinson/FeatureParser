@@ -20,13 +20,37 @@ def getTextNoNA(txt):
   txtnona = txt.dropna()  # drop empty rows between texts
   return getTextNA(txtnona)
 
+def prepareText(txt):
+  # This function simply takes the txt file, finds all B and I tags, and takes segments up to 3 either side of these tags. N/A rows are then added.
+  # This means that at most we have 7:1 ratio between B and I.
+  bioIn = [(bio != "O") for bio in txt['bio_only']]
+  bioSmear = np.convolve(bioIn, [True, True, True, True, True, True, True], mode="same")
+
+  bioSmearSmooth = np.clip(bioSmear, False, True)
+  txt['bi_true'] = bioSmearSmooth
+
+  txt[txt['bi_true'] == False] = np.nan
+
+  #Fixes issue where bi_true set to True even when NaN
+  txt[txt['token'] == np.nan] = np.nan
+
+  return txt.drop(['bi_true'], axis=1)
+
+
 # pass a data frame through our feature extractor
-def extract_features(txt):
+def extract_features(txt, preparetxt=False):
   pos_vocab = get_pos_vocab()
   dictionary = get_dictionary()
 
+  if preparetxt:
+    txt = prepareText(txt)
+
+  print(txt.head(75))
+
   txtna = getTextNA(txt)
   txtnona = getTextNoNA(txt)
+
+  print(txtnona.head(50))
 
   posinds = [pos_index(u, pos_vocab) for u in txtnona['upos']]
   txtnona['pos_indices'] = posinds
