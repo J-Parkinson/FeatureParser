@@ -45,12 +45,8 @@ def extract_features(txt, preparetxt=False):
   if preparetxt:
     txt = prepareText(txt)
 
-  print(txt.head(75))
-
   txtna = getTextNA(txt)
   txtnona = getTextNoNA(txt)
-
-  print(txtnona.head(50))
 
   posinds = [pos_index(u, pos_vocab) for u in txtnona['upos']]
   txtnona['pos_indices'] = posinds
@@ -78,7 +74,5 @@ def extract_features(txt, preparetxt=False):
 
   bioints = [bio_index(b) for b in txtnona['bio_only']]
   txtnona['bio_only'] = bioints
-
-  print(txtnona.head(10))
 
   return txtnona

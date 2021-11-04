@@ -27,7 +27,6 @@ def at(tok):
   return "@" in tok
 
 # feature 7: is the word capitalised and a majority of the words around that word are not?
-# if so we are likely to have a
 def capRatio(toks):
 
   isna = pd.isna(toks["token"])
