@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 # feature 1: convert POS-tags to integers
 #This way we can train on it numerically
@@ -10,7 +11,7 @@ def pos_index(pos, pos_vocab):
 def is_propn(pos):
   return pos=='PROPN'
 
-# feature 3: is the first character a capital letter?
+# feature 3A: is the first character a capital letter?
 def title_case(tok):
   return tok[0:1].isupper()
 
@@ -60,8 +61,30 @@ def capRatio(toks):
 #strange brand names etc. will not be in there, so it could be a good identifier of those words.
 #it will however also pick up on hashtags and @s, hence the addition of those features.
 def checkInDictionary(dict, tok):
-  return tok in dict
+  return tok.lower() in dict
 
+# feature 9: punctuation
+def justSymbols(tok):
+  return bool(re.match("\s*\W\s*", tok))
+
+#feature 10: is it capitalised AND the capital letter not at the start of a tweet or sentence?
+def whereIsCapitalAndStartOfSentence(txt):
+  tokens = ["."] + list(txt["token"])
+
+  isEndOfSentence = [token in [".", "?", "!", np.nan] for token in tokens]
+  isStartOfSentence = isEndOfSentence[:-1]
+
+  isCapitalised = [title_case(str(token).replace("NaN", "s")) for token in tokens[1:]]
+
+  isCapitalAtNotStart = np.array([(not isStart) + isCapital*2 for (isStart, isCapital) in zip(isStartOfSentence, isCapitalised)])
+
+  isCapitalAtNotStart = np.delete(isCapitalAtNotStart, txt.isnull().any(axis=1))
+
+  return isCapitalAtNotStart
+
+#Feature 11: length of tokens
+def length(tok):
+  return len(tok)
 
 
 # training feature
