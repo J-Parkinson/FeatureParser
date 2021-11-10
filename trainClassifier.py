@@ -26,6 +26,9 @@ def trainModelNGram(txt, logreg):
     #Probably should use dev set here instead?
     preds = fixPreds(logreg.predict(X_train))
     X_train["preds-1"] = np.roll(preds, 1)
+    X_train["preds-2"] = np.roll(preds, 2)
+    X_train["preds+1"] = np.roll(preds, -1)
+    X_train["preds+2"] = np.roll(preds, -1)
     logreg = LogisticRegression(random_state=0, multi_class='multinomial', penalty='none', solver='newton-cg',
                                 class_weight="balanced").fit(
         X_train, Y_train)
@@ -52,6 +55,9 @@ def testModel(txt, logregs, save=True, saveLoc="test.txt"):
     Y_dev = getYTrain(txt)
     preds_1gram = fixPreds(logregs[0].predict(X_dev))
     X_dev["preds-1"] = np.roll(preds_1gram, 1)
+    X_dev["preds-2"] = np.roll(preds_1gram, 2)
+    X_dev["preds+1"] = np.roll(preds_1gram, -1)
+    X_dev["preds+2"] = np.roll(preds_1gram, -2)
     print(X_dev.head(50))
     preds = fixPreds(logregs[1].predict(X_dev))
 
