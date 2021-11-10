@@ -17,7 +17,6 @@ def getTextNA(txt):
   return txtna
 
 def getTextNoNA(txt):
-  print(txt)
   txtnona = txt.dropna()  # drop empty rows between texts
   return getTextNA(txtnona)
 
